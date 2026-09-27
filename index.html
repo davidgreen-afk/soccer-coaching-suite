@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching Suite | CQI360</title>
+<style>
+  :root {
+    --navy: #0D2137;
+    --teal: #0B7A75;
+    --teal-light: #E4F3F1;
+    --gold: #F4A825;
+    --gold-light: #FDF1DC;
+    --gray-bg: #F4F5F7;
+    --card: #FFFFFF;
+    --text: #1B2430;
+    --text-muted: #5C6B7A;
+    --border: #E1E5EA;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--gray-bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  h1, h2, h3 { font-family: Georgia, Cambria, "Times New Roman", serif; color: var(--navy); margin: 0; }
+  a { color: var(--teal); }
+
+  header { background: var(--navy); color: #fff; padding: 2.2rem 1.5rem 2.6rem; }
+  header .inner { max-width: 980px; margin: 0 auto; }
+  header .wordmark { font-family: Georgia, serif; font-weight: 700; font-size: 1.05rem; color: var(--gold); letter-spacing: 0.04em; }
+  header h1 { color: #fff; font-size: clamp(1.8rem, 4vw, 2.5rem); margin-top: 0.4rem; }
+  header p.tagline { margin-top: 0.6rem; color: #B9C6D4; font-size: 1.05rem; max-width: 640px; }
+
+  main { max-width: 980px; margin: -1.2rem auto 3rem; padding: 0 1.5rem; }
+
+  .credential-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(13,33,55,0.06);
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .credential-card .badge {
+    flex-shrink: 0;
+    width: 2.4rem; height: 2.4rem;
+    border-radius: 50%;
+    background: var(--gold-light);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .credential-card p { margin: 0; font-size: 0.94rem; color: var(--text); }
+  .credential-card strong { color: var(--navy); }
+
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; margin-bottom: 1.5rem; }
+  @media (max-width: 720px) { .tool-grid { grid-template-columns: 1fr; } }
+
+  .tool-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(13,33,55,0.06);
+    padding: 1.6rem 1.6rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .tool-card .icon-circle {
+    width: 3rem; height: 3rem;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 0.9rem;
+  }
+  .tool-card.coach .icon-circle { background: var(--navy); color: #fff; }
+  .tool-card.tracker .icon-circle { background: var(--teal); color: #fff; }
+  .tool-card h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .tool-card p.desc { color: var(--text-muted); font-size: 0.92rem; flex-grow: 1; margin-bottom: 1.1rem; }
+  .tool-card .tool-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--navy); color: #fff;
+    text-decoration: none;
+    padding: 0.6rem 1rem;
+    border-radius: 7px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    align-self: flex-start;
+  }
+  .tool-card.tracker .tool-link { background: var(--teal); }
+  .tool-card .tool-link:hover { opacity: 0.9; }
+
+  .connection-card {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 1.5rem;
+  }
+  .connection-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .connection-card p { margin: 0; font-size: 0.92rem; color: var(--text); }
+
+  footer { text-align: center; color: var(--text-muted); font-size: 0.82rem; padding: 0 1.5rem 2.5rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div class="wordmark">CQI360</div>
+    <h1>Coaching Suite</h1>
+    <p class="tagline">Two free tools for clubs, coaches, and directors of coaching: evaluate the coach, track the player. Built to work together.</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="credential-card">
+    <div class="badge">&#9917;</div>
+    <p>Built by <strong>David P. Green, Ed.D.</strong>, a U.S. Soccer&ndash;certified coach and organizational-change researcher. The same rigor behind CQI360's other diagnostic tools, applied to the sideline instead of the boardroom.</p>
+  </div>
+
+  <div class="tool-grid">
+    <div class="tool-card coach">
+      <div class="icon-circle">&#128221;</div>
+      <h2>Coach Evaluation</h2>
+      <p class="desc">A free self-study for clubs evaluating a coach's practice: session planning, technical instruction, player communication, safety, and more. Nine areas, color-coded results, a knowledge map, and a recommended next step for every gap.</p>
+      <a class="tool-link" href="./coach-evaluation/">Open Coach Evaluation &rarr;</a>
+    </div>
+    <div class="tool-card tracker">
+      <div class="icon-circle">&#128200;</div>
+      <h2>Player Evolution Tracker</h2>
+      <p class="desc">Log where each player stands across ten development dimensions, throughout the season. Watch the trend line, not just the last game, with a chart, a season summary, and CSV export built in.</p>
+      <a class="tool-link" href="./player-tracker/">Open Player Tracker &rarr;</a>
+    </div>
+  </div>
+
+  <div class="connection-card">
+    <h3>Why these two belong together</h3>
+    <p>Coach Evaluation asks whether players show visible improvement over a season. Most clubs answer that with a guess. Log the same season in Player Tracker instead, and that question stops being a guess; it's a real trend line you can point to.</p>
+  </div>
+
+</main>
+
+<footer>
+  CQI360 &middot; Coaching Suite &middot; free to use, no login required &middot; cqi360.com
+</footer>
+
+</body>
+</html>
