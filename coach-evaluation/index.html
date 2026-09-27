@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CQI360 | Where Do You Stand? A Self-Study Guide</title>
+<style>
+  :root {
+    --navy: #0D2137;
+    --teal: #0B7A75;
+    --teal-light: #E4F3F1;
+    --gold: #F4A825;
+    --gold-light: #FDF1DC;
+    --slate: #334155;
+    --gray-bg: #F4F5F7;
+    --card: #FFFFFF;
+    --text: #1B2430;
+    --text-muted: #5C6B7A;
+    --border: #E1E5EA;
+    --red-bg: #FBEAEA; --red-txt: #9C2B2B;
+    --amber-bg: #FCEFDA; --amber-txt: #8A5A0B;
+    --green-bg: #E1F0E5; --green-txt: #1E6B3A;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--gray-bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3 { font-family: Georgia, Cambria, "Times New Roman", serif; color: var(--navy); margin: 0; }
+
+  button { font-family: inherit; cursor: pointer; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
+
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: 1.8rem 1.5rem 2rem;
+  }
+  header .inner { max-width: 1080px; margin: 0 auto; }
+  header .wordmark { font-family: Georgia, serif; font-weight: 700; font-size: 1.15rem; color: var(--gold); letter-spacing: 0.04em; }
+  header h1 { color: #fff; font-size: clamp(1.5rem, 3vw, 2.1rem); margin-top: 0.3rem; }
+  header p.tagline { margin-top: 0.4rem; color: #B9C6D4; font-size: 1rem; max-width: 640px; }
+
+  main { max-width: 1080px; margin: -1rem auto 3rem; padding: 0 1.5rem; }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(13,33,55,0.06);
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1.3rem;
+  }
+  .card h2 { font-size: 1.2rem; margin-bottom: 0.6rem; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: flex-end; }
+  .btn {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--navy);
+    padding: 0.5rem 0.9rem;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .btn:hover { background: var(--gray-bg); }
+  .btn.danger:hover { border-color: #C0392B; color: #C0392B; background: var(--red-bg); }
+  .btn.small { font-size: 0.78rem; padding: 0.35rem 0.7rem; }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.9rem;
+  }
+  .field label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem; }
+  .field input {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.95rem;
+  }
+
+  .intro-text { font-size: 0.95rem; color: var(--text); margin: 0.6rem 0 0; }
+  .intro-text.italic { font-style: italic; color: var(--text-muted); }
+
+  .step-list { margin: 0.8rem 0 0; padding-left: 1.2rem; font-size: 0.92rem; }
+  .step-list li { margin-bottom: 0.4rem; }
+
+  /* ---------- Domain picker ---------- */
+  .domain-picker-list { margin-top: 0.9rem; display: grid; gap: 0.55rem; }
+  .domain-picker-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--gray-bg);
+  }
+  .domain-picker-item input { margin-top: 0.25rem; width: 18px; height: 18px; flex-shrink: 0; }
+  .domain-picker-item .dname { font-weight: 700; color: var(--navy); font-size: 0.95rem; }
+  .domain-picker-item .dline { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+  /* ---------- Domain question cards ---------- */
+  .domain-card .domain-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .domain-card .domain-line { font-size: 0.88rem; color: var(--text-muted); margin: 0.15rem 0 1rem; }
+
+  .question-block { margin-bottom: 1.1rem; }
+  .question-block:last-child { margin-bottom: 0; }
+  .question-text { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+
+  .option-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .option-pill {
+    flex: 1 1 150px;
+    text-align: center;
+    padding: 0.55rem 0.7rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 0.87rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .option-pill:hover { background: var(--gray-bg); }
+  .option-pill.selected-0 { background: var(--red-bg); border-color: #E3A9A4; color: var(--red-txt); font-weight: 700; }
+  .option-pill.selected-1 { background: var(--amber-bg); border-color: #F0CE95; color: var(--amber-txt); font-weight: 700; }
+  .option-pill.selected-2 { background: var(--green-bg); border-color: #A9D6B6; color: var(--green-txt); font-weight: 700; }
+
+  /* ---------- Results ---------- */
+  .results-overall {
+    text-align: center;
+    padding: 0.6rem 0 1.1rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+  .results-overall .num { font-family: Georgia, serif; font-size: 2.4rem; font-weight: 700; color: var(--navy); line-height: 1; }
+  .results-overall .lbl { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem; }
+  .band-chip {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 0.25rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+  .band-chip.band-0 { background: var(--red-bg); color: var(--red-txt); }
+  .band-chip.band-1 { background: var(--amber-bg); color: var(--amber-txt); }
+  .band-chip.band-2 { background: var(--green-bg); color: var(--green-txt); }
+
+  .domain-result-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .domain-result-row:last-child { border-bottom: none; }
+  .domain-result-row .dr-name { flex: 1 1 auto; font-size: 0.9rem; font-weight: 600; color: var(--navy); }
+  .domain-result-row .dr-score { font-family: Georgia, serif; font-size: 0.95rem; font-weight: 700; color: var(--text-muted); width: 52px; text-align: right; }
+  .dr-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .dr-badge.band-0 { background: var(--red-bg); color: var(--red-txt); }
+  .dr-badge.band-1 { background: var(--amber-bg); color: var(--amber-txt); }
+  .dr-badge.band-2 { background: var(--green-bg); color: var(--green-txt); }
+  .dr-badge.band-none { background: var(--gray-bg); color: var(--text-muted); }
+
+  .legend-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted); }
+  .legend-swatch { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+  .reflection-list { margin: 0.8rem 0 0; padding-left: 1.2rem; font-size: 0.92rem; }
+  .reflection-list li { margin-bottom: 0.5rem; }
+
+  .cta-box {
+    background: var(--gold-light);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    margin-top: 0.8rem;
+    font-size: 0.92rem;
+    color: var(--navy);
+  }
+  .cta-contact { margin-top: 0.6rem; font-size: 0.85rem; color: var(--text-muted); }
+  .finish-card { text-align: center; }
+  .finish-card h2 { margin-bottom: 0.4rem; }
+  .finish-card p { color: var(--text-muted); font-size: 0.95rem; margin: 0 0 1rem; }
+  .finish-card .toolbar { justify-content: center; }
+
+  footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 0 1.5rem 2.5rem; }
+
+  @media print {
+    header { background: #fff !important; color: #000 !important; padding: 0 0 0.6rem; }
+    header .wordmark, header h1 { color: #000 !important; }
+    header p.tagline { color: #333 !important; }
+    .toolbar, .btn { display: none !important; }
+    .domain-picker-item input { display: none; }
+    body { background: #fff; }
+    main { margin: 0; max-width: 100%; }
+    .card { box-shadow: none; border: 1px solid #999; page-break-inside: avoid; }
+    *:focus { outline: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div class="wordmark">CQI360</div>
+    <h1>Where Do You Stand?</h1>
+    <p class="tagline">A self-study guide for restaurants, clubs, and hospitality venues. From strategy to systems that work.</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>Assessment info</h2>
+    <div class="field-grid" style="margin-top:0.7rem;">
+      <div class="field">
+        <label for="est-name">Establishment</label>
+        <input type="text" id="est-name" placeholder="e.g. The Anchor Room">
+      </div>
+      <div class="field">
+        <label for="role-input">Your role</label>
+        <input type="text" id="role-input" placeholder="e.g. Owner, GM, Regional Manager">
+      </div>
+      <div class="field">
+        <label for="assessed-by">Assessed by</label>
+        <input type="text" id="assessed-by" placeholder="Owner / GM name">
+      </div>
+      <div class="field">
+        <label for="assess-date">Date</label>
+        <input type="date" id="assess-date">
+      </div>
+    </div>
+    <p class="intro-text italic" style="margin-top:1rem;">A private tool. Nobody grades this but you. Answer honestly and use it to see where things actually stand, not where you assume they stand.</p>
+    <ol class="step-list">
+      <li>Pick the areas that matter most right now &mdash; you don't need to cover all nine today.</li>
+      <li>Answer each question with the option closest to true. There's no trick answer.</li>
+      <li>Review your color-coded results below and decide if it's worth a second, outside opinion.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="toolbar" style="justify-content: space-between; align-items:center;">
+      <h2>Step 1: Choose your focus areas</h2>
+      <div class="toolbar">
+        <button class="btn small" id="select-all-btn" type="button">Select all</button>
+        <button class="btn small" id="clear-all-btn" type="button">Clear all</button>
+      </div>
+    </div>
+    <div class="domain-picker-list" id="domain-picker-list"></div>
+  </div>
+
+  <div id="domain-cards-container"></div>
+
+  <div class="card" id="results-card" style="display:none;">
+    <h2>Step 3: What your scores mean</h2>
+    <div class="results-overall">
+      <div class="num" id="overall-num">0%</div>
+      <div class="lbl">Overall score across selected areas</div>
+      <div class="band-chip" id="overall-band-chip">&mdash;</div>
+    </div>
+    <div id="domain-results-list"></div>
+    <div class="legend-row" id="legend-row"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="reflection-heading">Is a self-score enough?</h2>
+    <p class="intro-text" id="reflection-body"></p>
+    <ul class="reflection-list" id="reflection-bullets"></ul>
+    <div class="cta-box">
+      <span id="cta-text"></span>
+      <div class="cta-contact" id="cta-contact"></div>
+    </div>
+  </div>
+
+  <div class="card finish-card">
+    <h2>Save your results</h2>
+    <p>Email a copy to CQI360, export a text file, or print a copy before you close this page.</p>
+    <div class="toolbar">
+      <button class="btn" id="email-btn" type="button">Email results to CQI360</button>
+      <button class="btn" id="export-btn" type="button">Export results</button>
+      <button class="btn" id="print-btn" type="button">Print / Save as PDF</button>
+      <button class="btn danger" id="reset-btn" type="button">Start new assessment</button>
+    </div>
+  </div>
+
+</main>
+
+<footer></footer>
+
+<script>
+/* ============================================================================
+   CQI360 SELF-STUDY ENGINE — REUSABLE TEMPLATE
+   ============================================================================
+   TO BUILD A NEW VERSION FOR A DIFFERENT INDUSTRY OR VERTICAL:
+   Edit ONLY the CONFIG object below (brand, title, domains, CTA, storage key).
+   Do not touch anything under "ENGINE — DO NOT EDIT BELOW" — the scoring
+   math, color bands, export, print, and email-results logic all read from
+   CONFIG and work unchanged for any set of domains you put in it.
+
+   Each domain needs: an id (unique, no spaces), a name, a one-line
+   description, and a list of questions. Each question needs 3 options,
+   each scored 0, 1, or 2. Domain max is always (question count x 2), and
+   band thresholds (80% / 50%) are set once, in CONFIG.bands, for all
+   domains and the overall score alike.
+   ============================================================================ */
+
+  var CONFIG = {
+    storageKey: "cqi360SelfStudy_coachEval_v1",
+    brand: {
+      wordmark: "CQI360",
+      title: "Coach Evaluation",
+      tagline: "A self-study guide for clubs evaluating a coach's practice. From strategy to systems that work."
+    },
+    entityLabel: "Coach's name",
+    entityPlaceholder: "e.g. Alex Rivera",
+    assessedByPlaceholder: "Your name",
+    roleLabel: "Your role",
+    rolePlaceholder: "e.g. Director of Coaching, Club President",
+    intro: "A private tool. Nobody grades this but you. Answer honestly and use it to see where this coach's practice actually stands, not where you assume it stands.",
+    steps: [
+      "Pick the areas that matter most right now \u2014 you don't need to cover all nine today.",
+      "Answer each question with the option closest to true. There's no trick answer.",
+      "Review your color-coded results below and decide if it's worth a second, outside opinion."
+    ],
+    bands: { green: 80, amber: 50 },
+    bandLabels: ["Priority area", "Worth a closer look", "Solid footing"],
+    reflection: {
+      heading: "Is a self-score enough?",
+      body: "A self-score is a genuinely useful gut check, and most of the time it's all you need. But it has one built-in blind spot: it only reflects what one person, watching from the sideline sometimes, can see. This is worth a second, outside opinion if any of the following is true:",
+      bullets: [
+        "You oversee multiple teams or coaches and can't watch every practice.",
+        "You're fielding parent concerns you can't fully verify yourself.",
+        "You're deciding on a contract renewal, a promotion, or a difficult conversation.",
+        "Your gut and this score don't quite agree with each other."
+      ]
+    },
+    cta: {
+      text: "There's no obligation attached to this guide. If a closer look would help \u2014 an independent practice observation, a facilitated coach-development workshop, or a validated evaluation across your whole coaching staff \u2014 CQI360 is glad to talk it through.",
+      contactLine: "David P. Green, Ed.D. | david.green@cqi360.com | 239.565.5267 | cqi360.com",
+      recipientEmail: "david.green@cqi360.com",
+      emailSubjectPrefix: "Coach Evaluation Results"
+    },
+    domains: [
+      { id: "planning", name: "Session Planning & Delivery", line: "Structure, pacing, and use of practice time.", questions: [
+        { text: "Does the coach show up with a clear, age-appropriate session plan?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Is practice time used efficiently, with minimal standing in line or downtime?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Are sessions adjusted when something clearly isn't working?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] }
+      ]},
+      { id: "instruction", name: "Technical & Tactical Instruction", line: "Age-appropriate teaching of skills and game understanding.", questions: [
+        { text: "Does the coach correct technique in a way players can actually apply?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Does the coach teach tactical concepts appropriate to the team's age and level?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Do players show visible improvement over a season?", options: [{l:"Hard to tell",v:0},{l:"Some players",v:1},{l:"Most players",v:2}] }
+      ]},
+      { id: "wholeplayer", name: "Whole-Player Development", line: "Does coaching go beyond on-field technique?", questions: [
+        { text: "Does the coach address more than just technique \u2014 e.g. mental resilience, nutrition, or life skills?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Does the coach use film, stats, or other tools to help players understand their own game?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] }
+      ]},
+      { id: "communication", name: "Player Communication & Culture", line: "Tone, encouragement, and how mistakes are handled.", questions: [
+        { text: "Does the coach correct mistakes without shaming or berating players?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Are all players \u2014 not just the strongest \u2014 given meaningful playing time and attention?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Would most players describe practice as something they look forward to?", options: [{l:"Not confident",v:0},{l:"Mostly",v:1},{l:"Yes, confident",v:2}] }
+      ]},
+      { id: "parents", name: "Parent & Family Communication", line: "Professionalism and responsiveness off the field.", questions: [
+        { text: "Does the coach communicate clearly with parents about schedules, expectations, and playing-time philosophy?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "When a parent raises a concern, is it handled professionally rather than defensively?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] }
+      ]},
+      { id: "safety", name: "Safety & Risk Management", line: "Injury awareness, load management, and emergency readiness.", questions: [
+        { text: "Does the coach follow concussion and injury protocols without being reminded?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Is training load (intensity, minutes, contact) managed appropriately for the age group?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] }
+      ]},
+      { id: "sportsmanship", name: "Sportsmanship & Team Culture", line: "Modeling respect for officials, opponents, and the game.", questions: [
+        { text: "Does the coach model respectful behavior toward officials and opponents, even under pressure?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Does the coach address poor sportsmanship among players quickly and directly?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] }
+      ]},
+      { id: "growth", name: "Professional Growth", line: "Credentialing and willingness to keep learning.", questions: [
+        { text: "Is the coach's certification or license current for this age group and level?", options: [{l:"No",v:0},{l:"In progress",v:1},{l:"Yes",v:2}] },
+        { text: "Does the coach seek out new training, film, or mentorship rather than coaching the same way every season?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] }
+      ]},
+      { id: "reliability", name: "Reliability & Administration", line: "Attendance, punctuality, and following club policy.", questions: [
+        { text: "Is the coach reliably on time and present for scheduled sessions and games?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] },
+        { text: "Does the coach follow club policies on rosters, playing-time rules, and communication?", options: [{l:"Rarely",v:0},{l:"Sometimes",v:1},{l:"Almost always",v:2}] }
+      ]}
+    ]
+  };
+
+  /* ============================================================================
+     ENGINE — DO NOT EDIT BELOW (reads everything from CONFIG above)
+     ============================================================================ */
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = CONFIG.storageKey;
+  var DOMAINS = CONFIG.domains;
+
+  // Populate brand/text from CONFIG into the page
+  document.title = CONFIG.brand.wordmark + " | " + CONFIG.brand.title;
+  document.querySelector("header .wordmark").textContent = CONFIG.brand.wordmark;
+  document.querySelector("header h1").textContent = CONFIG.brand.title;
+  document.querySelector("header p.tagline").textContent = CONFIG.brand.tagline;
+  document.querySelector('label[for="est-name"]').textContent = CONFIG.entityLabel;
+  document.querySelector("#est-name").placeholder = CONFIG.entityPlaceholder;
+  document.querySelector("#assessed-by").placeholder = CONFIG.assessedByPlaceholder;
+  document.querySelector('label[for="role-input"]').textContent = CONFIG.roleLabel;
+  document.querySelector("#role-input").placeholder = CONFIG.rolePlaceholder;
+  document.getElementById("legend-row").innerHTML =
+    "<span class=\"legend-swatch\"><span class=\"legend-dot\" style=\"background:#1E6B3A;\"></span>" + CONFIG.bands.green + "%+ \u2014 " + CONFIG.bandLabels[2] + "</span>" +
+    "<span class=\"legend-swatch\"><span class=\"legend-dot\" style=\"background:#8A5A0B;\"></span>" + CONFIG.bands.amber + "\u2013" + (CONFIG.bands.green - 1) + "% \u2014 " + CONFIG.bandLabels[1] + "</span>" +
+    "<span class=\"legend-swatch\"><span class=\"legend-dot\" style=\"background:#9C2B2B;\"></span>Below " + CONFIG.bands.amber + "% \u2014 " + CONFIG.bandLabels[0] + "</span>";
+  document.querySelector(".intro-text.italic").textContent = CONFIG.intro;
+  var stepList = document.querySelector(".step-list");
+  stepList.innerHTML = CONFIG.steps.map(function (s) { return "<li>" + s + "</li>"; }).join("");
+  document.querySelector("#reflection-heading").textContent = CONFIG.reflection.heading;
+  document.querySelector("#reflection-body").textContent = CONFIG.reflection.body;
+  document.querySelector("#reflection-bullets").innerHTML = CONFIG.reflection.bullets.map(function (b) { return "<li>" + b + "</li>"; }).join("");
+  document.querySelector("#cta-text").textContent = CONFIG.cta.text;
+  document.querySelector("#cta-contact").textContent = CONFIG.cta.contactLine;
+  document.querySelector("footer").textContent = CONFIG.brand.wordmark + " \u00b7 " + CONFIG.brand.title + " \u00b7 results are stored only in this browser";
+
+  var selected = {};   // domainId -> true/false
+  var answers = {};    // domainId -> [questionIndex] -> value (0/1/2) or undefined
+  var saveTimeout = null;
+
+  DOMAINS.forEach(function (d) {
+    selected[d.id] = true;
+    answers[d.id] = new Array(d.questions.length).fill(undefined);
+  });
+
+  function domainMax(d) { return d.questions.length * 2; }
+
+  function domainScore(d) {
+    var arr = answers[d.id];
+    var sum = 0, answeredCount = 0;
+    arr.forEach(function (v) { if (v !== undefined) { sum += v; answeredCount++; } });
+    return { sum: sum, answeredCount: answeredCount, total: d.questions.length };
+  }
+
+  function bandFor(pct) {
+    if (pct >= 80) return 2;
+    if (pct >= 50) return 1;
+    return 0;
+  }
+  var bandLabels = CONFIG.bandLabels;
+
+  // ---------- Domain picker ----------
+  var pickerList = document.getElementById("domain-picker-list");
+  DOMAINS.forEach(function (d) {
+    var item = document.createElement("label");
+    item.className = "domain-picker-item";
+    var cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = true;
+    cb.addEventListener("change", function () {
+      selected[d.id] = cb.checked;
+      renderDomainCards();
+      recalc();
+      scheduleSave();
+    });
+    var textWrap = document.createElement("div");
+    textWrap.innerHTML = "<div class=\"dname\">" + d.name + "</div><div class=\"dline\">" + d.line + "</div>";
+    item.appendChild(cb);
+    item.appendChild(textWrap);
+    pickerList.appendChild(item);
+  });
+
+  document.getElementById("select-all-btn").addEventListener("click", function () {
+    DOMAINS.forEach(function (d) { selected[d.id] = true; });
+    pickerList.querySelectorAll("input[type=checkbox]").forEach(function (cb) { cb.checked = true; });
+    renderDomainCards(); recalc(); scheduleSave();
+  });
+  document.getElementById("clear-all-btn").addEventListener("click", function () {
+    DOMAINS.forEach(function (d) { selected[d.id] = false; });
+    pickerList.querySelectorAll("input[type=checkbox]").forEach(function (cb) { cb.checked = false; });
+    renderDomainCards(); recalc(); scheduleSave();
+  });
+
+  // ---------- Domain question cards ----------
+  var domainCardsContainer = document.getElementById("domain-cards-container");
+
+  function renderDomainCards() {
+    domainCardsContainer.innerHTML = "";
+    var anySelected = false;
+    DOMAINS.forEach(function (d) {
+      if (!selected[d.id]) return;
+      anySelected = true;
+      var card = document.createElement("div");
+      card.className = "card domain-card";
+
+      var titleRow = document.createElement("div");
+      titleRow.className = "domain-title-row";
+      titleRow.innerHTML = "<h2>" + d.name + "</h2>";
+      card.appendChild(titleRow);
+
+      var lineEl = document.createElement("p");
+      lineEl.className = "domain-line";
+      lineEl.textContent = d.line;
+      card.appendChild(lineEl);
+
+      d.questions.forEach(function (q, qi) {
+        var qBlock = document.createElement("div");
+        qBlock.className = "question-block";
+        var qText = document.createElement("div");
+        qText.className = "question-text";
+        qText.textContent = q.text;
+        qBlock.appendChild(qText);
+
+        var optRow = document.createElement("div");
+        optRow.className = "option-row";
+        q.options.forEach(function (opt) {
+          var pill = document.createElement("button");
+          pill.type = "button";
+          pill.className = "option-pill";
+          pill.textContent = opt.l;
+          if (answers[d.id][qi] === opt.v) pill.classList.add("selected-" + opt.v);
+          pill.addEventListener("click", function () {
+            answers[d.id][qi] = opt.v;
+            optRow.querySelectorAll(".option-pill").forEach(function (p) {
+              p.classList.remove("selected-0", "selected-1", "selected-2");
+            });
+            pill.classList.add("selected-" + opt.v);
+            recalc();
+            scheduleSave();
+          });
+          optRow.appendChild(pill);
+        });
+        qBlock.appendChild(optRow);
+        card.appendChild(qBlock);
+      });
+
+      domainCardsContainer.appendChild(card);
+    });
+
+    var stepHeader = document.querySelector("#domain-cards-container");
+    if (!anySelected) {
+      domainCardsContainer.innerHTML = "<div class=\"card\"><p class=\"intro-text\">No areas selected. Choose at least one area above to begin.</p></div>";
+    }
+  }
+
+  // ---------- Results ----------
+  var resultsCard = document.getElementById("results-card");
+  var overallNum = document.getElementById("overall-num");
+  var overallBandChip = document.getElementById("overall-band-chip");
+  var domainResultsList = document.getElementById("domain-results-list");
+
+  function recalc() {
+    var anySelected = DOMAINS.some(function (d) { return selected[d.id]; });
+    if (!anySelected) { resultsCard.style.display = "none"; return; }
+    resultsCard.style.display = "block";
+
+    var totalSum = 0, totalMax = 0, anyAnswered = false;
+    domainResultsList.innerHTML = "";
+
+    DOMAINS.forEach(function (d) {
+      if (!selected[d.id]) return;
+      var s = domainScore(d);
+      var max = domainMax(d);
+      var row = document.createElement("div");
+      row.className = "domain-result-row";
+
+      if (s.answeredCount === 0) {
+        row.innerHTML = "<div class=\"dr-name\">" + d.name + "</div>" +
+          "<div class=\"dr-score\">&mdash;</div>" +
+          "<div class=\"dr-badge band-none\">Not started</div>";
+      } else {
+        totalSum += s.sum;
+        totalMax += max;
+        anyAnswered = true;
+        var pct = Math.round((s.sum / max) * 100);
+        var band = bandFor(pct);
+        var partial = s.answeredCount < s.total ? " (partial)" : "";
+        row.innerHTML = "<div class=\"dr-name\">" + d.name + "</div>" +
+          "<div class=\"dr-score\">" + s.sum + "/" + max + "</div>" +
+          "<div class=\"dr-badge band-" + band + "\">" + bandLabels[band] + partial + "</div>";
+      }
+      domainResultsList.appendChild(row);
+    });
+
+    if (anyAnswered) {
+      var overallPct = Math.round((totalSum / totalMax) * 100);
+      overallNum.textContent = overallPct + "%";
+      var ob = bandFor(overallPct);
+      overallBandChip.textContent = bandLabels[ob];
+      overallBandChip.className = "band-chip band-" + ob;
+    } else {
+      overallNum.textContent = "\u2014";
+      overallBandChip.textContent = "Not started";
+      overallBandChip.className = "band-chip";
+    }
+  }
+
+  // ---------- Save / load ----------
+  function scheduleSave() {
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(save, 400);
+  }
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        estName: document.getElementById("est-name").value,
+        assessedBy: document.getElementById("assessed-by").value,
+        role: document.getElementById("role-input").value,
+        assessDate: document.getElementById("assess-date").value,
+        selected: selected,
+        answers: answers
+      }));
+    } catch (e) { /* ignore */ }
+  }
+  function load() {
+    var raw;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { raw = null; }
+    if (!raw) return;
+    try {
+      var data = JSON.parse(raw);
+      document.getElementById("est-name").value = data.estName || "";
+      document.getElementById("assessed-by").value = data.assessedBy || "";
+      document.getElementById("role-input").value = data.role || "";
+      document.getElementById("assess-date").value = data.assessDate || "";
+      if (data.selected) {
+        DOMAINS.forEach(function (d) {
+          if (data.selected[d.id] !== undefined) selected[d.id] = data.selected[d.id];
+        });
+        var cbs = pickerList.querySelectorAll("input[type=checkbox]");
+        DOMAINS.forEach(function (d, i) { cbs[i].checked = selected[d.id]; });
+      }
+      if (data.answers) {
+        DOMAINS.forEach(function (d) {
+          if (data.answers[d.id]) answers[d.id] = data.answers[d.id];
+        });
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  [document.getElementById("est-name"), document.getElementById("role-input"), document.getElementById("assessed-by"), document.getElementById("assess-date")]
+    .forEach(function (el) { el.addEventListener("input", scheduleSave); });
+
+  document.getElementById("reset-btn").addEventListener("click", function () {
+    if (!confirm("Start a new assessment? This clears the current establishment's answers.")) return;
+    DOMAINS.forEach(function (d) { selected[d.id] = true; answers[d.id] = new Array(d.questions.length).fill(undefined); });
+    document.getElementById("est-name").value = "";
+    document.getElementById("role-input").value = "";
+    document.getElementById("assessed-by").value = "";
+    document.getElementById("assess-date").value = "";
+    pickerList.querySelectorAll("input[type=checkbox]").forEach(function (cb) { cb.checked = true; });
+    renderDomainCards();
+    recalc();
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  });
+
+  document.getElementById("print-btn").addEventListener("click", function () { window.print(); });
+
+  function buildSummaryLines() {
+    var lines = [];
+    lines.push(CONFIG.brand.wordmark + " \u2014 " + CONFIG.brand.title + " Results");
+    var est = document.getElementById("est-name").value;
+    var role = document.getElementById("role-input").value;
+    var by = document.getElementById("assessed-by").value;
+    var dt = document.getElementById("assess-date").value;
+    if (est) lines.push(CONFIG.entityLabel + ": " + est);
+    if (role) lines.push(CONFIG.roleLabel + ": " + role);
+    if (by) lines.push("Assessed by: " + by);
+    if (dt) lines.push("Date: " + dt);
+    lines.push("");
+
+    var totalSum = 0, totalMax = 0, anyAnswered = false;
+    DOMAINS.forEach(function (d) {
+      if (!selected[d.id]) return;
+      var s = domainScore(d);
+      var max = domainMax(d);
+      if (s.answeredCount === 0) {
+        lines.push(d.name + ": not started");
+        return;
+      }
+      totalSum += s.sum; totalMax += max; anyAnswered = true;
+      var pct = Math.round((s.sum / max) * 100);
+      var band = bandLabels[bandFor(pct)];
+      lines.push(d.name + ": " + s.sum + "/" + max + " (" + pct + "%) \u2014 " + band + (s.answeredCount < s.total ? " [partial]" : ""));
+    });
+    lines.push("");
+    var overallPct = null;
+    if (anyAnswered) {
+      overallPct = Math.round((totalSum / totalMax) * 100);
+      lines.push("OVERALL: " + overallPct + "% \u2014 " + bandLabels[bandFor(overallPct)]);
+    } else {
+      lines.push("OVERALL: not started");
+    }
+    lines.push("");
+    lines.push(CONFIG.cta.contactLine);
+    return { lines: lines, est: est, overallPct: overallPct, anyAnswered: anyAnswered };
+  }
+
+  document.getElementById("export-btn").addEventListener("click", function () {
+    var built = buildSummaryLines();
+    var blob = new Blob([built.lines.join("\n")], { type: "text/plain" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var fname = (built.est || "assessment").replace(/[^a-z0-9\-_ ]/gi, "").trim().replace(/\s+/g, "-").toLowerCase();
+    a.href = url;
+    a.download = CONFIG.brand.wordmark.toLowerCase() + "-" + (fname || "assessment") + ".txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById("email-btn").addEventListener("click", function () {
+    var built = buildSummaryLines();
+    if (!built.anyAnswered) {
+      alert("Answer at least one question before emailing results.");
+      return;
+    }
+    var subject = CONFIG.cta.emailSubjectPrefix + (built.est ? " \u2014 " + built.est : "") +
+      (built.overallPct !== null ? " (" + built.overallPct + "%)" : "");
+    var body = built.lines.join("\n");
+    var mailtoUrl = "mailto:" + encodeURIComponent(CONFIG.cta.recipientEmail) +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+    window.location.href = mailtoUrl;
+  });
+
+  load();
+  renderDomainCards();
+  recalc();
+})();
+</script>
+
+</body>
+</html>

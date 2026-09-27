@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Evolution Tracker</title>
+<style>
+  :root {
+    --navy: #0D2137;
+    --teal: #0B7A75;
+    --teal-light: #E4F3F1;
+    --gold: #F4A825;
+    --gold-light: #FDF1DC;
+    --gray-bg: #F4F5F7;
+    --card: #FFFFFF;
+    --text: #1B2430;
+    --text-muted: #5C6B7A;
+    --border: #E1E5EA;
+    --danger: #C0392B;
+    --danger-light: #FBEAEA;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--gray-bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  h1, h2, h3 { font-family: Georgia, Cambria, "Times New Roman", serif; color: var(--navy); margin: 0; }
+  button, select { font-family: inherit; cursor: pointer; }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
+
+  header { background: var(--navy); color: #fff; padding: 1.8rem 1.5rem 2rem; }
+  header .inner { max-width: 1080px; margin: 0 auto; }
+  header .wordmark { font-family: Georgia, serif; font-weight: 700; font-size: 1.1rem; color: var(--gold); letter-spacing: 0.03em; }
+  header h1 { color: #fff; font-size: clamp(1.5rem, 3vw, 2.1rem); margin-top: 0.3rem; }
+  header p.tagline { margin-top: 0.4rem; color: #B9C6D4; font-size: 1rem; max-width: 680px; }
+
+  main { max-width: 1080px; margin: -1rem auto 3rem; padding: 0 1.5rem; }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(13,33,55,0.06);
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1.3rem;
+  }
+  .card h2 { font-size: 1.2rem; margin-bottom: 0.7rem; }
+  .card .sub { color: var(--text-muted); font-size: 0.88rem; margin: -0.4rem 0 0.9rem; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .btn {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--navy);
+    padding: 0.5rem 0.9rem;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .btn:hover { background: var(--gray-bg); }
+  .btn.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .btn.primary:hover { background: #096660; }
+  .btn.danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
+  .btn.small { font-size: 0.78rem; padding: 0.32rem 0.65rem; }
+
+  #rubric-panel {
+    background: var(--gray-bg);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+  }
+  table.rubric-table { width: 100%; border-collapse: collapse; margin-top: 0.4rem; }
+  table.rubric-table th, table.rubric-table td {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    vertical-align: top;
+    font-size: 0.85rem;
+  }
+  table.rubric-table th { background: var(--navy); color: #fff; font-weight: 600; width: 130px; }
+
+  label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem; }
+  input[type="text"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.94rem;
+    background: #fff;
+    color: var(--text);
+  }
+  textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+
+  .field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.9rem; align-items: end; }
+
+  /* ---------- Roster ---------- */
+  .roster-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+  .roster-chip {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.35rem 0.5rem 0.35rem 0.9rem;
+    font-size: 0.88rem;
+  }
+  .roster-chip .pos { color: var(--text-muted); font-size: 0.78rem; }
+  .roster-chip .rm-btn {
+    background: none; border: none; color: var(--text-muted);
+    width: 20px; height: 20px; border-radius: 50%; font-size: 1rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .roster-chip .rm-btn:hover { background: var(--danger-light); color: var(--danger); }
+
+  /* ---------- Dimension rating grid ---------- */
+  .dim-grid { display: grid; gap: 0.7rem; margin-top: 0.9rem; }
+  .dim-row {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dim-row:last-child { border-bottom: none; }
+  .dim-name { font-size: 0.92rem; font-weight: 600; color: var(--navy); }
+  .rating-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .rating-pill {
+    flex: 1 1 auto;
+    min-width: 78px;
+    text-align: center;
+    padding: 0.4rem 0.5rem;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    background: #fff;
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+  .rating-pill:hover { background: var(--gray-bg); }
+  .rating-pill.selected {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+    font-weight: 700;
+  }
+  @media (max-width: 640px) {
+    .dim-row { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Entries table ---------- */
+  .table-wrap { overflow-x: auto; margin-top: 0.9rem; }
+  table.entries {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+    min-width: 700px;
+  }
+  table.entries th {
+    text-align: left;
+    padding: 0.45rem 0.5rem;
+    border-bottom: 2px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  table.entries td {
+    padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.entries td.score-cell { text-align: center; font-weight: 600; }
+  table.entries td.notes-cell { max-width: 220px; color: var(--text-muted); font-size: 0.82rem; }
+
+  /* ---------- Chart ---------- */
+  .chart-legend { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.8rem 0; }
+  .legend-item {
+    display: flex; align-items: center; gap: 0.35rem;
+    font-size: 0.78rem; color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.25rem 0.6rem 0.25rem 0.4rem;
+  }
+  .legend-item input { margin: 0; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .chart-wrap { width: 100%; overflow-x: auto; }
+
+  /* ---------- Summary table ---------- */
+  table.summary { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 0.6rem; }
+  table.summary th {
+    text-align: left; padding: 0.5rem; font-size: 0.75rem; color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+  }
+  table.summary td { padding: 0.5rem; border-bottom: 1px solid var(--border); }
+  .trend-up { color: #1E7A4C; font-weight: 700; }
+  .trend-down { color: var(--danger); font-weight: 700; }
+  .trend-flat { color: var(--text-muted); font-weight: 700; }
+
+  .empty-note { color: var(--text-muted); font-size: 0.9rem; font-style: italic; }
+
+  .finish-card { text-align: center; }
+  .finish-card p { color: var(--text-muted); font-size: 0.95rem; margin: 0 0 1rem; }
+  .finish-card .toolbar { justify-content: center; }
+
+  footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 0 1.5rem 2.5rem; }
+
+  #summary-view { display: none; }
+  .summary-header { text-align: center; padding: 1rem 0 1.2rem; border-bottom: 2px solid var(--navy); margin-bottom: 1.2rem; }
+  .summary-brand { font-size: 0.8rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+  .summary-header h1 { font-size: 1.6rem; color: var(--navy); font-family: Georgia, serif; }
+  #summary-meta { font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem; }
+  .summary-headline-block { text-align: center; margin-bottom: 1rem; }
+  .summary-headline-num { font-family: Georgia, serif; font-size: 2.4rem; font-weight: 700; color: var(--navy); line-height: 1; }
+  .summary-headline-label { font-size: 0.82rem; color: var(--text-muted); }
+  .summary-chart-wrap { text-align: center; margin: 0.5rem 0 1.2rem; }
+  .summary-chart-wrap svg { max-width: 480px; }
+  .summary-section-title { font-family: Georgia, serif; font-size: 1.1rem; color: var(--navy); margin-bottom: 0.6rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+  .summary-footer { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 1.2rem; padding-top: 0.8rem; border-top: 1px solid var(--border); }
+  .summary-note-item { padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .summary-note-item .note-date { font-weight: 700; color: var(--navy); margin-right: 0.5rem; }
+
+  @media print {
+    header { background: #fff !important; color: #000 !important; padding: 0 0 0.6rem; }
+    header .wordmark, header h1 { color: #000 !important; }
+    header p.tagline { color: #333 !important; }
+    .toolbar, .btn, .rm-btn { display: none !important; }
+    body { background: #fff; }
+    main { margin: 0; max-width: 100%; }
+    .card { box-shadow: none; border: 1px solid #999; page-break-inside: avoid; }
+    *:focus { outline: none !important; }
+  }
+
+  @media print {
+    body.printing-summary-only * { visibility: hidden !important; }
+    body.printing-summary-only #summary-view,
+    body.printing-summary-only #summary-view * { visibility: visible !important; }
+    body.printing-summary-only #summary-view {
+      display: block !important;
+      position: absolute; left: 0; top: 0; width: 100%;
+      padding: 0.25in;
+    }
+    body.printing-summary-only header,
+    body.printing-summary-only footer,
+    body.printing-summary-only main > *:not(#summary-view) { display: none !important; }
+    body.printing-summary-only .summary-header { padding: 0.25rem 0 0.4rem; margin-bottom: 0.4rem; }
+    body.printing-summary-only .summary-headline-block { margin-bottom: 0.2rem; }
+    body.printing-summary-only .summary-chart-wrap { margin: 0.1rem 0 0.3rem; }
+    body.printing-summary-only .summary-chart-wrap svg { max-width: 320px !important; }
+    body.printing-summary-only .summary-section-title { margin-bottom: 0.3rem; padding-bottom: 0.2rem; }
+    body.printing-summary-only .summary-note-item { padding: 0.35rem 0; }
+    body.printing-summary-only .summary-footer { margin-top: 0.5rem; padding-top: 0.35rem; }
+    @page { size: letter; margin: 0.25in; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div class="wordmark">CQI360</div>
+    <h1>Player Evolution Tracker</h1>
+    <p class="tagline">Log where each player stands, dimension by dimension, throughout the season &mdash; then watch the trend line, not just the last game.</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>Roster</h2>
+    <p class="sub">Add every player you want to track this season.</p>
+    <div class="field-row">
+      <div>
+        <label for="new-player-name">Player name</label>
+        <input type="text" id="new-player-name" placeholder="e.g. Jordan Alvarez">
+      </div>
+      <div>
+        <label for="new-player-pos">Position (optional)</label>
+        <input type="text" id="new-player-pos" placeholder="e.g. Center Back">
+      </div>
+      <div>
+        <button class="btn primary" id="add-player-btn" type="button" style="width:100%;">+ Add Player</button>
+      </div>
+    </div>
+    <div class="roster-list" id="roster-list"></div>
+  </div>
+
+  <div class="card">
+    <h2>Log an Entry</h2>
+    <p class="sub">Rate only what you observed this session. Leave the rest blank.</p>
+    <button class="btn small" id="rubric-toggle-btn" type="button">What do these levels mean?</button>
+    <div id="rubric-panel" style="display:none;"></div>
+    <div class="field-row" style="margin-top:1rem;">
+      <div>
+        <label for="entry-player-select">Player</label>
+        <select id="entry-player-select"></select>
+      </div>
+      <div>
+        <label for="entry-date">Date</label>
+        <input type="date" id="entry-date">
+      </div>
+    </div>
+    <div class="dim-grid" id="entry-dim-grid"></div>
+    <div style="margin-top:0.9rem;">
+      <label for="entry-notes">Notes (optional)</label>
+      <textarea id="entry-notes" placeholder="Anything specific worth remembering about this session..."></textarea>
+    </div>
+    <button class="btn primary" id="save-entry-btn" type="button" style="margin-top:1rem;">Save Entry</button>
+    <span id="save-entry-msg" style="margin-left:0.8rem; font-size:0.85rem; color:var(--teal); font-weight:600;"></span>
+  </div>
+
+  <div class="card">
+    <h2>Player Evolution</h2>
+    <p class="sub">Pick a player to see their trend across the season.</p>
+    <div class="field-row" style="margin-bottom:0.5rem;">
+      <div>
+        <label for="view-player-select">Player</label>
+        <select id="view-player-select"></select>
+      </div>
+    </div>
+    <div id="evolution-content"></div>
+  </div>
+
+  <div class="card finish-card">
+    <h2>Save your records</h2>
+    <p>Generate a one-page report for the selected player to share with a parent or director of coaching. Export a CSV of every logged entry to share or back up. On another device, use Import to bring that file in &mdash; it merges in, skipping anything already there, so you won't get duplicates.</p>
+    <div class="toolbar">
+      <button class="btn primary" id="player-summary-btn" type="button">One-Page Player Report</button>
+      <button class="btn" id="export-csv-btn" type="button">Export all entries (CSV)</button>
+      <button class="btn" id="import-csv-btn" type="button">Import CSV</button>
+      <input type="file" id="import-csv-input" accept=".csv" style="display:none;">
+      <span id="import-msg" style="align-self:center; font-size:0.85rem; color:var(--teal); font-weight:600;"></span>
+      <button class="btn" id="print-btn" type="button">Print / Save as PDF</button>
+      <button class="btn danger" id="reset-btn" type="button">Clear all data</button>
+    </div>
+  </div>
+
+  <div id="summary-view">
+    <div class="summary-header">
+      <div class="summary-brand">CQI360 &middot; Player Evolution Tracker</div>
+      <h1 id="summary-player-name">Untitled Player</h1>
+      <div id="summary-meta"></div>
+    </div>
+    <div class="summary-headline-block">
+      <div class="summary-headline-num" id="summary-headline-num">&mdash;</div>
+      <div class="summary-headline-label" id="summary-headline-label">Average change across tracked dimensions</div>
+    </div>
+    <div class="summary-chart-wrap" id="summary-chart-wrap"></div>
+    <h2 class="summary-section-title">Season Summary</h2>
+    <div id="summary-table-wrap"></div>
+    <h2 class="summary-section-title">Coach's Notes</h2>
+    <div id="summary-notes-list"></div>
+    <div class="summary-footer">David P. Green, Ed.D. | david.green@cqi360.com | 239.565.5267 | cqi360.com</div>
+  </div>
+
+</main>
+
+<footer>
+  Player Evolution Tracker &middot; CQI360 &middot; data is stored only in this browser
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "playerEvolutionTracker_v1";
+
+  var DIMENSIONS = [
+    { id: "technical", name: "Technical Skills", color: "0D2137" },
+    { id: "tactical", name: "Tactical Understanding", color: "0B7A75" },
+    { id: "mental", name: "Mental Resilience", color: "F4A825" },
+    { id: "nutrition", name: "Nutrition & Recovery", color: "C0392B" },
+    { id: "career", name: "Career Pathways Awareness", color: "6A4C93" },
+    { id: "film", name: "Film & Game Analysis", color: "1B998B" },
+    { id: "injury", name: "Injury Prevention & Physical Care", color: "E07A5F" },
+    { id: "leadership", name: "Leadership", color: "3D5A80" },
+    { id: "cultural", name: "Cultural Understanding", color: "8E7C93" },
+    { id: "academics", name: "Academics (Soccer-Connected)", color: "577590" }
+  ];
+
+  var RATING_LABELS = { 1: "Emerging", 2: "Developing", 3: "Proficient", 4: "Mastery" };
+  var RATING_DESCRIPTIONS = {
+    1: "The player is just beginning to show this. It appears rarely, and usually needs direct prompting from a coach.",
+    2: "The player shows this with some consistency, but it's not yet reliable under pressure or in games. Still needs regular reinforcement.",
+    3: "The player demonstrates this consistently in practice and most games, with minimal prompting. Solid, age-appropriate performance.",
+    4: "The player demonstrates this consistently, even under pressure, and can often help teach or model it for teammates."
+  };
+
+  var rubricToggleBtn = document.getElementById("rubric-toggle-btn");
+  var rubricPanel = document.getElementById("rubric-panel");
+  rubricPanel.innerHTML =
+    "<table class=\"rubric-table\"><thead><tr><th>Level</th><th>What it looks like</th></tr></thead><tbody>" +
+    [1, 2, 3, 4].map(function (v) {
+      return "<tr><td><strong>" + v + " \u2014 " + RATING_LABELS[v] + "</strong></td><td>" + RATING_DESCRIPTIONS[v] + "</td></tr>";
+    }).join("") +
+    "</tbody></table>";
+  rubricToggleBtn.addEventListener("click", function () {
+    var isOpen = rubricPanel.style.display !== "none";
+    rubricPanel.style.display = isOpen ? "none" : "block";
+    rubricToggleBtn.textContent = isOpen ? "What do these levels mean?" : "Hide level descriptions";
+  });
+
+  var players = [];   // { id, name, position }
+  var entries = [];   // { id, playerId, date, notes, scores: { dimId: 1-4 } }
+  var playerCounter = 0;
+  var entryCounter = 0;
+  var visibleDims = {}; // dimId -> bool, for chart toggles (per current view player)
+
+  function uid(prefix, counterFn) { return prefix + "_" + counterFn(); }
+
+  // ---------- Persistence ----------
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ players: players, entries: entries, playerCounter: playerCounter, entryCounter: entryCounter }));
+    } catch (e) { /* ignore */ }
+  }
+  function load() {
+    var raw;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { raw = null; }
+    if (!raw) return;
+    try {
+      var data = JSON.parse(raw);
+      players = data.players || [];
+      entries = data.entries || [];
+      playerCounter = data.playerCounter || 0;
+      entryCounter = data.entryCounter || 0;
+    } catch (e) { /* ignore */ }
+  }
+
+  // ---------- Roster ----------
+  var rosterList = document.getElementById("roster-list");
+  var entryPlayerSelect = document.getElementById("entry-player-select");
+  var viewPlayerSelect = document.getElementById("view-player-select");
+
+  function renderRoster() {
+    rosterList.innerHTML = "";
+    if (players.length === 0) {
+      rosterList.innerHTML = "<span class=\"empty-note\">No players yet \u2014 add your first one above.</span>";
+    }
+    players.forEach(function (p) {
+      var chip = document.createElement("div");
+      chip.className = "roster-chip";
+      chip.innerHTML = "<span>" + p.name + "</span>" +
+        (p.position ? "<span class=\"pos\">" + p.position + "</span>" : "");
+      var rm = document.createElement("button");
+      rm.className = "rm-btn";
+      rm.type = "button";
+      rm.innerHTML = "\u00d7";
+      rm.title = "Remove player and all their entries";
+      rm.addEventListener("click", function () {
+        if (!confirm("Remove " + p.name + " and all their logged entries? This can't be undone.")) return;
+        players = players.filter(function (x) { return x.id !== p.id; });
+        entries = entries.filter(function (e) { return e.playerId !== p.id; });
+        save();
+        renderRoster();
+        renderPlayerSelects();
+        renderEntryDimGrid();
+        renderEvolution();
+      });
+      chip.appendChild(rm);
+      rosterList.appendChild(chip);
+    });
+  }
+
+  function renderPlayerSelects() {
+    [entryPlayerSelect, viewPlayerSelect].forEach(function (sel) {
+      var prevValue = sel.value;
+      sel.innerHTML = "";
+      if (players.length === 0) {
+        var opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "\u2014 Add a player first \u2014";
+        sel.appendChild(opt);
+        return;
+      }
+      players.forEach(function (p) {
+        var o = document.createElement("option");
+        o.value = p.id;
+        o.textContent = p.name + (p.position ? " (" + p.position + ")" : "");
+        sel.appendChild(o);
+      });
+      if (players.some(function (p) { return p.id === prevValue; })) sel.value = prevValue;
+    });
+  }
+
+  document.getElementById("add-player-btn").addEventListener("click", function () {
+    var nameInput = document.getElementById("new-player-name");
+    var posInput = document.getElementById("new-player-pos");
+    var name = nameInput.value.trim();
+    if (!name) { nameInput.focus(); return; }
+    playerCounter++;
+    players.push({ id: uid("p", function () { return playerCounter; }), name: name, position: posInput.value.trim() });
+    nameInput.value = "";
+    posInput.value = "";
+    save();
+    renderRoster();
+    renderPlayerSelects();
+    renderEntryDimGrid();
+    renderEvolution();
+  });
+
+  // ---------- Entry logging ----------
+  var entryDimGrid = document.getElementById("entry-dim-grid");
+  var currentEntryRatings = {};
+
+  function renderEntryDimGrid() {
+    entryDimGrid.innerHTML = "";
+    currentEntryRatings = {};
+    DIMENSIONS.forEach(function (d) {
+      var row = document.createElement("div");
+      row.className = "dim-row";
+      var nameEl = document.createElement("div");
+      nameEl.className = "dim-name";
+      nameEl.textContent = d.name;
+      var pillsEl = document.createElement("div");
+      pillsEl.className = "rating-pills";
+      [1, 2, 3, 4].forEach(function (v) {
+        var pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "rating-pill";
+        pill.textContent = v + " \u2014 " + RATING_LABELS[v];
+        pill.addEventListener("click", function () {
+          if (currentEntryRatings[d.id] === v) {
+            delete currentEntryRatings[d.id];
+            pill.classList.remove("selected");
+          } else {
+            currentEntryRatings[d.id] = v;
+            pillsEl.querySelectorAll(".rating-pill").forEach(function (p2) { p2.classList.remove("selected"); });
+            pill.classList.add("selected");
+          }
+        });
+        pillsEl.appendChild(pill);
+      });
+      row.appendChild(nameEl);
+      row.appendChild(pillsEl);
+      entryDimGrid.appendChild(row);
+    });
+  }
+
+  document.getElementById("save-entry-btn").addEventListener("click", function () {
+    var playerId = entryPlayerSelect.value;
+    var msgEl = document.getElementById("save-entry-msg");
+    if (!playerId) { msgEl.textContent = "Add a player first."; msgEl.style.color = "var(--danger)"; return; }
+    var date = document.getElementById("entry-date").value;
+    if (!date) { msgEl.textContent = "Pick a date."; msgEl.style.color = "var(--danger)"; return; }
+    if (Object.keys(currentEntryRatings).length === 0) { msgEl.textContent = "Rate at least one dimension."; msgEl.style.color = "var(--danger)"; return; }
+
+    entryCounter++;
+    entries.push({
+      id: uid("e", function () { return entryCounter; }),
+      playerId: playerId,
+      date: date,
+      notes: document.getElementById("entry-notes").value.trim(),
+      scores: Object.assign({}, currentEntryRatings)
+    });
+    save();
+
+    msgEl.style.color = "var(--teal)";
+    msgEl.textContent = "Saved.";
+    setTimeout(function () { msgEl.textContent = ""; }, 2500);
+
+    document.getElementById("entry-notes").value = "";
+    renderEntryDimGrid();
+    if (viewPlayerSelect.value === playerId) renderEvolution();
+  });
+
+  // ---------- Evolution view ----------
+  var evolutionContent = document.getElementById("evolution-content");
+
+  function renderEvolution() {
+    var playerId = viewPlayerSelect.value;
+    evolutionContent.innerHTML = "";
+    if (!playerId) {
+      evolutionContent.innerHTML = "<p class=\"empty-note\">Add a player and log at least one entry to see their evolution.</p>";
+      return;
+    }
+    var pEntries = entries.filter(function (e) { return e.playerId === playerId; }).slice().sort(function (a, b) {
+      if (a.date < b.date) return -1;
+      if (a.date > b.date) return 1;
+      return 0;
+    });
+    if (pEntries.length === 0) {
+      evolutionContent.innerHTML = "<p class=\"empty-note\">No entries logged yet for this player.</p>";
+      return;
+    }
+
+    // Determine which dimensions have any data
+    var dimsWithData = DIMENSIONS.filter(function (d) {
+      return pEntries.some(function (e) { return e.scores[d.id] !== undefined; });
+    });
+
+    // init visibility defaults (show all with data) on first render for this player
+    dimsWithData.forEach(function (d) {
+      if (visibleDims[d.id] === undefined) visibleDims[d.id] = true;
+    });
+
+    // Legend / toggles
+    var legend = document.createElement("div");
+    legend.className = "chart-legend";
+    dimsWithData.forEach(function (d) {
+      var label = document.createElement("label");
+      label.className = "legend-item";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!visibleDims[d.id];
+      cb.addEventListener("change", function () {
+        visibleDims[d.id] = cb.checked;
+        renderEvolution();
+      });
+      var dot = document.createElement("span");
+      dot.className = "legend-dot";
+      dot.style.background = "#" + d.color;
+      label.appendChild(cb);
+      label.appendChild(dot);
+      label.appendChild(document.createTextNode(d.name));
+      legend.appendChild(label);
+    });
+    evolutionContent.appendChild(legend);
+
+    // Chart
+    var chartWrap = document.createElement("div");
+    chartWrap.className = "chart-wrap";
+    chartWrap.appendChild(buildLineChartSvg(pEntries, dimsWithData.filter(function (d) { return visibleDims[d.id]; })));
+    evolutionContent.appendChild(chartWrap);
+
+    // Summary table: first vs latest
+    var summaryTitle = document.createElement("h3");
+    summaryTitle.textContent = "Season Summary";
+    summaryTitle.style.marginTop = "1.3rem";
+    summaryTitle.style.fontSize = "1.05rem";
+    evolutionContent.appendChild(summaryTitle);
+
+    var table = document.createElement("table");
+    table.className = "summary";
+    var thead = "<tr><th>Dimension</th><th>First Logged</th><th>Latest</th><th>Change</th></tr>";
+    var rows = dimsWithData.map(function (d) {
+      var scored = pEntries.filter(function (e) { return e.scores[d.id] !== undefined; });
+      var first = scored[0].scores[d.id];
+      var latest = scored[scored.length - 1].scores[d.id];
+      var delta = latest - first;
+      var trendClass = delta > 0 ? "trend-up" : (delta < 0 ? "trend-down" : "trend-flat");
+      var arrow = delta > 0 ? "\u2191" : (delta < 0 ? "\u2193" : "\u2192");
+      return "<tr><td>" + d.name + "</td><td>" + first + " (" + RATING_LABELS[first] + ")</td>" +
+        "<td>" + latest + " (" + RATING_LABELS[latest] + ")</td>" +
+        "<td class=\"" + trendClass + "\">" + arrow + " " + (delta > 0 ? "+" : "") + delta + "</td></tr>";
+    }).join("");
+    table.innerHTML = thead + rows;
+    evolutionContent.appendChild(table);
+
+    // Entries log
+    var logTitle = document.createElement("h3");
+    logTitle.textContent = "Entry Log";
+    logTitle.style.marginTop = "1.3rem";
+    logTitle.style.fontSize = "1.05rem";
+    evolutionContent.appendChild(logTitle);
+
+    var tableWrap = document.createElement("div");
+    tableWrap.className = "table-wrap";
+    var logTable = document.createElement("table");
+    logTable.className = "entries";
+    var headerCells = "<th>Date</th>" + dimsWithData.map(function (d) { return "<th>" + d.name.split(" ")[0] + "</th>"; }).join("") + "<th>Notes</th><th></th>";
+    var bodyRows = pEntries.slice().reverse().map(function (e) {
+      var cells = "<td>" + e.date + "</td>";
+      cells += dimsWithData.map(function (d) {
+        var v = e.scores[d.id];
+        return "<td class=\"score-cell\">" + (v !== undefined ? v : "\u2013") + "</td>";
+      }).join("");
+      cells += "<td class=\"notes-cell\">" + (e.notes || "") + "</td>";
+      cells += "<td><button class=\"btn small danger\" data-entry-id=\"" + e.id + "\" type=\"button\">Delete</button></td>";
+      return "<tr>" + cells + "</tr>";
+    }).join("");
+    logTable.innerHTML = "<thead><tr>" + headerCells + "</tr></thead><tbody>" + bodyRows + "</tbody>";
+    tableWrap.appendChild(logTable);
+    evolutionContent.appendChild(tableWrap);
+
+    tableWrap.querySelectorAll("button[data-entry-id]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = btn.getAttribute("data-entry-id");
+        if (!confirm("Delete this entry?")) return;
+        entries = entries.filter(function (e) { return e.id !== id; });
+        save();
+        renderEvolution();
+      });
+    });
+  }
+
+  function buildLineChartSvg(pEntries, dims) {
+    var width = 820, height = 320, padL = 40, padR = 20, padT = 20, padB = 40;
+    var innerW = width - padL - padR, innerH = height - padT - padB;
+    var n = pEntries.length;
+    var xFor = function (i) { return n === 1 ? padL + innerW / 2 : padL + (innerW * i) / (n - 1); };
+    var yFor = function (v) { return padT + innerH - ((v - 1) / 3) * innerH; };
+
+    var svgParts = [];
+    svgParts.push('<svg viewBox="0 0 ' + width + ' ' + height + '" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:' + width + 'px;height:auto;font-family:-apple-system,sans-serif;">');
+
+    // gridlines + y labels (1-4)
+    [1, 2, 3, 4].forEach(function (v) {
+      var y = yFor(v);
+      svgParts.push('<line x1="' + padL + '" y1="' + y + '" x2="' + (width - padR) + '" y2="' + y + '" stroke="#E1E5EA" stroke-width="1" />');
+      svgParts.push('<text x="' + (padL - 10) + '" y="' + (y + 4) + '" font-size="11" fill="#5C6B7A" text-anchor="end">' + v + '</text>');
+    });
+
+    // x labels (dates) - show first, last, and a few in between if room
+    var labelEvery = Math.max(1, Math.ceil(n / 6));
+    pEntries.forEach(function (e, i) {
+      if (i % labelEvery === 0 || i === n - 1) {
+        var x = xFor(i);
+        svgParts.push('<text x="' + x + '" y="' + (height - padB + 18) + '" font-size="10" fill="#5C6B7A" text-anchor="middle">' + e.date.slice(5) + '</text>');
+      }
+    });
+
+    // lines per dimension
+    dims.forEach(function (d) {
+      var pts = [];
+      pEntries.forEach(function (e, i) {
+        if (e.scores[d.id] !== undefined) pts.push({ x: xFor(i), y: yFor(e.scores[d.id]) });
+      });
+      if (pts.length === 0) return;
+      var pathD = pts.map(function (p, i) { return (i === 0 ? "M" : "L") + p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ");
+      svgParts.push('<path d="' + pathD + '" fill="none" stroke="#' + d.color + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />');
+      pts.forEach(function (p) {
+        svgParts.push('<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4" fill="#' + d.color + '" />');
+      });
+    });
+
+    svgParts.push('</svg>');
+    var wrapper = document.createElement("div");
+    wrapper.innerHTML = svgParts.join("");
+    return wrapper.firstChild;
+  }
+
+  entryPlayerSelect.addEventListener("change", function () {});
+  viewPlayerSelect.addEventListener("change", function () {
+    visibleDims = {};
+    renderEvolution();
+  });
+
+  // ---------- Export / Print / Reset ----------
+  document.getElementById("print-btn").addEventListener("click", function () { window.print(); });
+
+  function buildPlayerSummaryView() {
+    var playerId = viewPlayerSelect.value;
+    var player = players.find(function (p) { return p.id === playerId; });
+    if (!player) {
+      alert("Select a player with at least one logged entry first.");
+      return false;
+    }
+    var pEntries = entries.filter(function (e) { return e.playerId === playerId; }).slice().sort(function (a, b) {
+      if (a.date < b.date) return -1;
+      if (a.date > b.date) return 1;
+      return 0;
+    });
+    if (pEntries.length === 0) {
+      alert("This player has no logged entries yet.");
+      return false;
+    }
+
+    var dimsWithData = DIMENSIONS.filter(function (d) {
+      return pEntries.some(function (e) { return e.scores[d.id] !== undefined; });
+    });
+
+    document.getElementById("summary-player-name").textContent = player.name;
+    var metaParts = [];
+    if (player.position) metaParts.push(player.position);
+    metaParts.push(pEntries[0].date + " \u2013 " + pEntries[pEntries.length - 1].date);
+    metaParts.push(pEntries.length + " entr" + (pEntries.length === 1 ? "y" : "ies") + " logged");
+    document.getElementById("summary-meta").textContent = metaParts.join(" \u2014 ");
+
+    var deltas = dimsWithData.map(function (d) {
+      var scored = pEntries.filter(function (e) { return e.scores[d.id] !== undefined; });
+      return scored[scored.length - 1].scores[d.id] - scored[0].scores[d.id];
+    });
+    var avgDelta = deltas.length ? (deltas.reduce(function (a, b) { return a + b; }, 0) / deltas.length) : 0;
+    var headlineEl = document.getElementById("summary-headline-num");
+    headlineEl.textContent = (avgDelta > 0 ? "+" : "") + avgDelta.toFixed(1);
+    headlineEl.style.color = avgDelta > 0 ? "#1E6B3A" : (avgDelta < 0 ? "#C0392B" : "#5C6B7A");
+
+    var chartWrapEl = document.getElementById("summary-chart-wrap");
+    chartWrapEl.innerHTML = "";
+    chartWrapEl.appendChild(buildLineChartSvg(pEntries, dimsWithData));
+
+    var tableWrapEl = document.getElementById("summary-table-wrap");
+    var table = document.createElement("table");
+    table.className = "summary";
+    var thead = "<tr><th>Dimension</th><th>First Logged</th><th>Latest</th><th>Change</th></tr>";
+    var rows = dimsWithData.map(function (d) {
+      var scored = pEntries.filter(function (e) { return e.scores[d.id] !== undefined; });
+      var first = scored[0].scores[d.id];
+      var latest = scored[scored.length - 1].scores[d.id];
+      var delta = latest - first;
+      var trendClass = delta > 0 ? "trend-up" : (delta < 0 ? "trend-down" : "trend-flat");
+      var arrow = delta > 0 ? "\u2191" : (delta < 0 ? "\u2193" : "\u2192");
+      return "<tr><td>" + d.name + "</td><td>" + first + " (" + RATING_LABELS[first] + ")</td>" +
+        "<td>" + latest + " (" + RATING_LABELS[latest] + ")</td>" +
+        "<td class=\"" + trendClass + "\">" + arrow + " " + (delta > 0 ? "+" : "") + delta + "</td></tr>";
+    }).join("");
+    table.innerHTML = thead + rows;
+    tableWrapEl.innerHTML = "";
+    tableWrapEl.appendChild(table);
+
+    var notesListEl = document.getElementById("summary-notes-list");
+    notesListEl.innerHTML = "";
+    var notedEntries = pEntries.filter(function (e) { return e.notes && e.notes.trim(); }).slice(-3).reverse();
+    if (notedEntries.length === 0) {
+      notesListEl.innerHTML = "<p class=\"empty-note\">No notes logged for this player.</p>";
+    } else {
+      notedEntries.forEach(function (e) {
+        var item = document.createElement("div");
+        item.className = "summary-note-item";
+        item.innerHTML = "<span class=\"note-date\">" + e.date + "</span>" + e.notes;
+        notesListEl.appendChild(item);
+      });
+    }
+    return true;
+  }
+
+  document.getElementById("player-summary-btn").addEventListener("click", function () {
+    var ok = buildPlayerSummaryView();
+    if (!ok) return;
+    document.body.classList.add("printing-summary-only");
+    window.print();
+  });
+  window.addEventListener("afterprint", function () {
+    document.body.classList.remove("printing-summary-only");
+  });
+
+  document.getElementById("export-csv-btn").addEventListener("click", function () {
+    var header = ["Player", "Position", "Date"].concat(DIMENSIONS.map(function (d) { return d.name; })).concat(["Notes"]);
+    var lines = [header.map(csvEscape).join(",")];
+    entries.slice().sort(function (a, b) {
+      var pa = players.find(function (p) { return p.id === a.playerId; });
+      var pb = players.find(function (p) { return p.id === b.playerId; });
+      var na = pa ? pa.name : "", nb = pb ? pb.name : "";
+      if (na !== nb) return na < nb ? -1 : 1;
+      return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0);
+    }).forEach(function (e) {
+      var p = players.find(function (x) { return x.id === e.playerId; });
+      var row = [p ? p.name : "(removed player)", p ? (p.position || "") : "", e.date];
+      DIMENSIONS.forEach(function (d) { row.push(e.scores[d.id] !== undefined ? e.scores[d.id] : ""); });
+      row.push(e.notes || "");
+      lines.push(row.map(csvEscape).join(","));
+    });
+    var blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "player-evolution-entries.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  function csvEscape(val) {
+    var s = String(val === undefined || val === null ? "" : val);
+    if (s.indexOf(",") !== -1 || s.indexOf('"') !== -1 || s.indexOf("\n") !== -1) {
+      s = '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+
+  // Robust CSV line parser handling quoted fields with embedded commas/quotes/newlines
+  function parseCsv(text) {
+    var rows = [];
+    var row = [];
+    var field = "";
+    var inQuotes = false;
+    var i = 0;
+    while (i < text.length) {
+      var c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+          inQuotes = false; i++; continue;
+        }
+        field += c; i++; continue;
+      } else {
+        if (c === '"') { inQuotes = true; i++; continue; }
+        if (c === ",") { row.push(field); field = ""; i++; continue; }
+        if (c === "\r") { i++; continue; }
+        if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; i++; continue; }
+        field += c; i++; continue;
+      }
+    }
+    if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+    return rows.filter(function (r) { return r.length > 1 || (r.length === 1 && r[0] !== ""); });
+  }
+
+  document.getElementById("import-csv-btn").addEventListener("click", function () {
+    document.getElementById("import-csv-input").click();
+  });
+
+  document.getElementById("import-csv-input").addEventListener("change", function (evt) {
+    var file = evt.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        importFromCsvText(e.target.result);
+      } catch (err) {
+        document.getElementById("import-msg").style.color = "var(--danger)";
+        document.getElementById("import-msg").textContent = "Import failed \u2014 check the file format.";
+      }
+      document.getElementById("import-csv-input").value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  function importFromCsvText(text) {
+    var rows = parseCsv(text);
+    if (rows.length < 2) throw new Error("empty file");
+    var header = rows[0];
+    // Expected: Player, Position, Date, <10 dimension names in DIMENSIONS order>, Notes
+    var dimStartIdx = 3;
+    var addedEntries = 0, skippedDupes = 0, addedPlayers = 0;
+
+    rows.slice(1).forEach(function (r) {
+      if (r.length < 3 || !r[0]) return; // need at least a player name
+      var playerName = r[0].trim();
+      var position = (r[1] || "").trim();
+      var date = (r[2] || "").trim();
+      if (!playerName || !date) return;
+
+      var player = players.find(function (p) { return p.name === playerName; });
+      if (!player) {
+        playerCounter++;
+        player = { id: "p_" + playerCounter, name: playerName, position: position };
+        players.push(player);
+        addedPlayers++;
+      }
+
+      var scores = {};
+      DIMENSIONS.forEach(function (d, idx) {
+        var raw = r[dimStartIdx + idx];
+        if (raw !== undefined && raw !== null && String(raw).trim() !== "") {
+          var v = parseInt(raw, 10);
+          if (v >= 1 && v <= 4) scores[d.id] = v;
+        }
+      });
+      var notes = (r[dimStartIdx + DIMENSIONS.length] || "").trim();
+
+      // Dedup: same player, date, notes, and identical score set already present?
+      var isDupe = entries.some(function (e) {
+        if (e.playerId !== player.id || e.date !== date || (e.notes || "") !== notes) return false;
+        var eKeys = Object.keys(e.scores), sKeys = Object.keys(scores);
+        if (eKeys.length !== sKeys.length) return false;
+        return sKeys.every(function (k) { return e.scores[k] === scores[k]; });
+      });
+      if (isDupe) { skippedDupes++; return; }
+
+      entryCounter++;
+      entries.push({ id: "e_" + entryCounter, playerId: player.id, date: date, notes: notes, scores: scores });
+      addedEntries++;
+    });
+
+    save();
+    renderRoster();
+    renderPlayerSelects();
+    renderEntryDimGrid();
+    renderEvolution();
+
+    var msgEl = document.getElementById("import-msg");
+    msgEl.style.color = "var(--teal)";
+    msgEl.textContent = "Imported " + addedEntries + " entr" + (addedEntries === 1 ? "y" : "ies") +
+      (addedPlayers ? " (" + addedPlayers + " new player" + (addedPlayers === 1 ? "" : "s") + ")" : "") +
+      (skippedDupes ? ", skipped " + skippedDupes + " duplicate" + (skippedDupes === 1 ? "" : "s") : "") + ".";
+  }
+
+  document.getElementById("reset-btn").addEventListener("click", function () {
+    if (!confirm("Clear all players and entries? This can't be undone.")) return;
+    players = [];
+    entries = [];
+    playerCounter = 0;
+    entryCounter = 0;
+    visibleDims = {};
+    save();
+    renderRoster();
+    renderPlayerSelects();
+    renderEntryDimGrid();
+    renderEvolution();
+  });
+
+  // ---------- Init ----------
+  load();
+  renderRoster();
+  renderPlayerSelects();
+  renderEntryDimGrid();
+  renderEvolution();
+
+  // default entry date to today
+  var today = new Date();
+  var yyyy = today.getFullYear();
+  var mm = String(today.getMonth() + 1).padStart(2, "0");
+  var dd = String(today.getDate()).padStart(2, "0");
+  document.getElementById("entry-date").value = yyyy + "-" + mm + "-" + dd;
+})();
+</script>
+
+</body>
+</html>
